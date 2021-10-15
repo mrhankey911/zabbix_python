@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 
 # Reading config file
-with open("/usr/local/share/zabbix-agent/config/uniswap2_exec_config.yaml", "r") as yamlfile:
+with open("/usr/local/share/zabbix-agent/config/config.yaml", "r") as yamlfile:
     config = yaml.load(yamlfile, Loader=yaml.FullLoader)
 
 # Define arguments
