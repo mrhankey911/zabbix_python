@@ -1,0 +1,81 @@
+databases:
+  - pancakeswap_executor:
+      dotenv_path: "/var/www/trade-core/pancakeswap-executor/current/config/.env"
+      database_connection_setting:
+          database: "DATABASE_NAME"
+          user: "DATABASE_USERNAME"
+          password: "DATABASE_PASSWORD"
+          host: "DATABASE_HOST"
+          port: "DATABASE_PORT"
+      get_finished_exchanges:
+        query: |-
+          SELECT COUNT(status) FROM uniswap2_executor.swap_view WHERE status = 'FINISHED' AND updated_at >=  CURRENT_TIMESTAMP - INTERVAL '5 minutes';
+      get_outdated_exchanges:
+        query: |-
+          SELECT COUNT(status) FROM uniswap2_executor.swap_view WHERE status = 'OUTDATED' AND updated_at >=  CURRENT_TIMESTAMP - INTERVAL '5 minutes';
+      get_canceled_exchanges:
+        query: |-
+          SELECT COUNT(status) FROM uniswap2_executor.swap_view WHERE status = 'CANCELED' AND updated_at >=  CURRENT_TIMESTAMP - INTERVAL '5 minutes';
+      get_failed_exchanges:
+        query: |-
+          SELECT COUNT(status) FROM uniswap2_executor.swap_view WHERE status = 'FAILED' AND updated_at >=  CURRENT_TIMESTAMP - INTERVAL '5 minutes';
+      get_time_average:
+        query: |-
+          SELECT AVG(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP - reserves_updated_at)) FROM uniswap2_executor.pair_view;
+      get_old_estimates:
+        query: |-
+         SELECT COUNT(reserves_updated_at) FROM uniswap2_executor.pair_view WHERE reserves_updated_at <= CURRENT_TIMESTAMP - INTERVAL '5 minutes';
+      get_new_statuses_in_work:
+        query: |-
+          SELECT COUNT(status) FROM uniswap2_executor.swap_view WHERE status != 'OUTDATED'
+                AND status != 'FINISHED'
+                AND status != 'FAILED'
+                AND status != 'CANCELED'
+                AND created_at >=  CURRENT_TIMESTAMP - INTERVAL '300 seconds';
+      get_old_statuses_in_work:
+        query: |-
+          SELECT COUNT(status) FROM uniswap2_executor.swap_view WHERE status != 'OUTDATED'
+                AND status != 'FINISHED'
+                AND status != 'FAILED'
+                AND status != 'CANCELED'
+                AND CURRENT_TIMESTAMP - created_at >= INTERVAL '300 seconds';
+  - uniswap2_executor:
+      dotenv_path: "/var/www/trade-core/pancakeswap-executor/current/.uniswap2.env"
+      database_connection_setting:
+          database: "DATABASE_NAME"
+          user: "DATABASE_USERNAME"
+          password: "DATABASE_PASSWORD"
+          host: "DATABASE_HOST"
+          port: "DATABASE_PORT"
+      get_finished_exchanges:
+        query: |-
+          SELECT COUNT(status) FROM uniswap2_executor.swap_view WHERE status = 'FINISHED' AND updated_at >=  CURRENT_TIMESTAMP - INTERVAL '5 minutes';
+      get_outdated_exchanges:
+        query: |-
+          SELECT COUNT(status) FROM uniswap2_executor.swap_view WHERE status = 'OUTDATED' AND updated_at >=  CURRENT_TIMESTAMP - INTERVAL '5 minutes';
+      get_canceled_exchanges:
+        query: |-
+          SELECT COUNT(status) FROM uniswap2_executor.swap_view WHERE status = 'CANCELED' AND updated_at >=  CURRENT_TIMESTAMP - INTERVAL '5 minutes';
+      get_failed_exchanges:
+        query: |-
+          SELECT COUNT(status) FROM uniswap2_executor.swap_view WHERE status = 'FAILED' AND updated_at >=  CURRENT_TIMESTAMP - INTERVAL '5 minutes';
+      get_time_average:
+        query: |-
+          SELECT AVG(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP - reserves_updated_at)) FROM uniswap2_executor.pair_view;
+      get_old_estimates:
+        query: |-
+         SELECT COUNT(reserves_updated_at) FROM uniswap2_executor.pair_view WHERE reserves_updated_at <= CURRENT_TIMESTAMP - INTERVAL '5 minutes';
+      get_new_statuses_in_work:
+        query: |-
+          SELECT COUNT(status) FROM uniswap2_executor.swap_view WHERE status != 'OUTDATED'
+                AND status != 'FINISHED'
+                AND status != 'FAILED'
+                AND status != 'CANCELED'
+                AND created_at >=  CURRENT_TIMESTAMP - INTERVAL '300 seconds';
+      get_old_statuses_in_work:
+        query: |-
+          SELECT COUNT(status) FROM uniswap2_executor.swap_view WHERE status != 'OUTDATED'
+                AND status != 'FINISHED'
+                AND status != 'FAILED'
+                AND status != 'CANCELED'
+                AND CURRENT_TIMESTAMP - created_at >= INTERVAL '300 seconds';
